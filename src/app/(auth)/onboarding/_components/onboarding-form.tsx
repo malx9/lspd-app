@@ -1,0 +1,78 @@
+"use client";
+
+import { useActionState } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { completeOnboarding } from "../actions";
+
+type Props = {
+  defaultNickname?: string;
+  discordUsername: string;
+  displayName: string;
+};
+
+const initialState = {
+  error: "",
+};
+
+export default function OnboardingForm({
+  defaultNickname = "",
+  discordUsername,
+  displayName,
+}: Props) {
+  const [state, formAction, isPending] = useActionState(
+    completeOnboarding,
+    initialState,
+  );
+
+  return (
+    <Card className="rounded-2xl">
+      <CardHeader>
+        <CardTitle>Complete onboarding</CardTitle>
+        <CardDescription>Set your OOC nickname to continue.</CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <form action={formAction} className="space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="discord">Discord account</Label>
+            <Input
+              id="discord"
+              value={displayName || discordUsername}
+              disabled
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="nickname">OOC nickname</Label>
+            <Input
+              id="nickname"
+              name="nickname"
+              defaultValue={defaultNickname}
+              placeholder="Enter your OOC nickname"
+              minLength={3}
+              maxLength={32}
+              required
+            />
+          </div>
+
+          {state?.error ? (
+            <p className="text-sm text-destructive">{state.error}</p>
+          ) : null}
+
+          <Button type="submit" disabled={isPending} className="w-full">
+            {isPending ? "Saving..." : "Continue"}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}
