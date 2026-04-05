@@ -22,7 +22,7 @@ export default async function Home() {
 
           <div className="flex gap-3">
             <SignOutButton />
-            <Link href="/protected" className="underline">
+            <Link href="/dashboard" className="underline">
               Protected page
             </Link>
           </div>

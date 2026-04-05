@@ -5,7 +5,7 @@ export function SignInButton() {
     <form
       action={async () => {
         "use server";
-        await signIn("discord");
+        await signIn("discord", { redirectTo: "/dashboard" });
       }}
     >
       <button className="rounded-md bg-blue-600 px-4 py-2 text-white">
