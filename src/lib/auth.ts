@@ -88,6 +88,33 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           },
         );
 
+        const guildResponse = await fetch(
+          `https://discord.com/api/guilds/${REQUIRED_GUILD_ID}`,
+          {
+            headers: {
+              Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+            },
+            cache: "no-store",
+          },
+        );
+
+        console.log("ENV CHECK", {
+          hasBotToken: !!process.env.DISCORD_BOT_TOKEN,
+          guildId: process.env.DISCORD_REQUIRED_GUILD_ID,
+          discordClientId: process.env.AUTH_DISCORD_ID,
+          botTokenPreview: process.env.DISCORD_BOT_TOKEN
+            ? `${process.env.DISCORD_BOT_TOKEN.slice(0, 6)}...${process.env.DISCORD_BOT_TOKEN.slice(-6)}`
+            : null,
+        });
+
+        console.log("GUILD EXISTENCE STATUS:", guildResponse.status);
+        console.log("GUILD EXISTENCE BODY:", await guildResponse.text());
+
+        console.log("GUILD CHECK STATUS:", response.status);
+
+        const text = await response.text();
+        console.log("GUILD CHECK BODY:", text);
+
         // User is not in the required guild
         if (!response.ok) {
           return false;

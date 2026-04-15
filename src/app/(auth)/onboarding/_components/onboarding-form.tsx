@@ -46,11 +46,7 @@ export default function OnboardingForm({
         <form action={formAction} className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="discord">Discord</Label>
-            <Input
-              id="discord"
-              value={displayName || discordUsername}
-              disabled
-            />
+            <Input id="discord" value={discordUsername} disabled />
           </div>
 
           <div className="space-y-2">
