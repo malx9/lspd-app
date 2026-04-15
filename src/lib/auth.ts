@@ -78,11 +78,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       try {
         const response = await fetch(
-          `https://discord.com/api/users/@me/guilds/${REQUIRED_GUILD_ID}/member`,
+          `https://discord.com/api/guilds/${REQUIRED_GUILD_ID}/members/${discordId}`,
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
             },
             cache: "no-store",
           },

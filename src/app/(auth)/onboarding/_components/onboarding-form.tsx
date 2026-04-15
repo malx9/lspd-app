@@ -36,14 +36,16 @@ export default function OnboardingForm({
   return (
     <Card className="rounded-2xl">
       <CardHeader>
-        <CardTitle>Complete onboarding</CardTitle>
-        <CardDescription>Set your OOC nickname to continue.</CardDescription>
+        <CardTitle>Ustaw swoje konto</CardTitle>
+        <CardDescription>
+          Wprowadź dane dotyczące twojego konta by przejść dalej
+        </CardDescription>
       </CardHeader>
 
       <CardContent>
         <form action={formAction} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="discord">Discord account</Label>
+            <Label htmlFor="discord">Discord</Label>
             <Input
               id="discord"
               value={displayName || discordUsername}
@@ -52,12 +54,12 @@ export default function OnboardingForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="nickname">OOC nickname</Label>
+            <Label htmlFor="nickname">Nick OOC</Label>
             <Input
               id="nickname"
               name="nickname"
               defaultValue={defaultNickname}
-              placeholder="Enter your OOC nickname"
+              placeholder="Wprowadź swój nick"
               minLength={3}
               maxLength={32}
               required
@@ -69,7 +71,7 @@ export default function OnboardingForm({
           ) : null}
 
           <Button type="submit" disabled={isPending} className="w-full">
-            {isPending ? "Saving..." : "Continue"}
+            {isPending ? "Zapisywanie..." : "Kontynuuj"}
           </Button>
         </form>
       </CardContent>
