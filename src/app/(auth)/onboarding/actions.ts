@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
 
 type ActionState = {
   error?: string;
@@ -98,7 +99,7 @@ export async function completeOnboarding(
     return { error: "Ten nick OOC jest już zajęty." };
   }
 
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     await tx.user.update({
       where: { id: session.user.id },
       data: {
