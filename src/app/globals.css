@@ -73,7 +73,7 @@
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.325rem;
-  --sidebar: oklch(0.205 0 0);
+  --sidebar: oklch(10.03% 0.0624 276.332);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -121,9 +121,19 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
 
+  html {
+    @apply font-sans;
+
+    min-height: 100%;
+    background-color: hsl(222 94% 6%);
+  }
+
+  body {
+    @apply text-foreground;
+
+    min-height: 100dvh;
+    background-color: hsl(222 94% 6%);
     background-image:
       radial-gradient(circle at 30% 20%, hsl(223 70% 14%), transparent 40%),
       radial-gradient(
@@ -132,10 +142,17 @@
         transparent 50%
       );
     background-repeat: no-repeat;
+    background-attachment: fixed;
   }
-  html {
-    @apply font-sans;
-  }
+}
+
+.app-background {
+  background-color: hsl(222 94% 6%);
+  background-image:
+    radial-gradient(circle at 30% 20%, hsl(223 70% 14%), transparent 40%),
+    radial-gradient(circle at 80% 90%, hsl(217 91% 60% / 0.08), transparent 50%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 .onboarding-form > div:has([data-legacy-rank="true"]) {

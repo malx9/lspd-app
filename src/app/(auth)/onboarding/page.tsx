@@ -22,6 +22,7 @@ export default async function OnboardingPage() {
           defaultNickname=""
           discordUsername={session.user.discordUsername ?? ""}
           displayName={session.user.displayName ?? ""}
+          image={session.user.image}
         />
       </div>
     </div>

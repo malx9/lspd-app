@@ -24,6 +24,7 @@ type DiscordProfile = {
   global_name?: string | null;
   email?: string | null;
   image_url?: string | null;
+  avatar?: string | null;
 };
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -40,11 +41,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       profile(profile) {
         const p = profile as DiscordProfile;
 
+        const image = p.avatar
+          ? `https://cdn.discordapp.com/avatars/${p.id}/${p.avatar}.png`
+          : null;
+
         return {
           id: p.id,
           name: p.global_name ?? p.username ?? null,
           email: p.email ?? null,
-          image: p.image_url ?? null,
+          image,
 
           discordId: p.id,
           discordUsername: p.username ?? "",
@@ -129,6 +134,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (existingUser && !existingUser.isActive) {
           return false;
         }
+
+        const avatar = discordProfile?.avatar
+          ? `https://cdn.discordapp.com/avatars/${discordProfile.id}/${discordProfile.avatar}.png`
+          : null;
+
+        await prisma.user.updateMany({
+          where: { discordId },
+          data: {
+            image: avatar,
+            discordUsername: discordProfile.username ?? undefined,
+            displayName:
+              discordProfile.global_name ??
+              discordProfile.username ??
+              undefined,
+            lastLoginAt: new Date(),
+          },
+        });
 
         return true;
       } catch (error) {

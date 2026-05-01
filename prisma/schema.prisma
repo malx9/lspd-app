@@ -5,6 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum UserRole {
@@ -13,48 +14,99 @@ enum UserRole {
   SUPERADMIN
 }
 
+enum CharacterApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
-  id                String    @id @default(uuid())
+  id              String    @id @default(uuid())
+  name            String?
+  email           String?   @unique
+  emailVerified   DateTime? @map("email_verified")
+  image           String?
 
-  name              String?
-  email             String?   @unique
-  emailVerified     DateTime? @map("email_verified")
-  image             String?
+  discordId       String    @unique @map("discord_id")
+  discordUsername String    @unique @map("discord_username")
+  displayName     String?   @map("display_name")
+  nickname        String?   @unique @map("nickname")
 
-  discordId         String    @unique @map("discord_id")
-  discordUsername   String    @unique @map("discord_username")
-  displayName       String?   @map("display_name")
-  nickname          String?   @unique @map("nickname")
+  role            UserRole  @default(MEMBER)
+  isActive        Boolean   @default(true) @map("is_active")
+  isOnboarded     Boolean   @default(false) @map("is_onboarded")
 
-  role              UserRole  @default(MEMBER)
-  isActive          Boolean   @default(true) @map("is_active")
-  isOnboarded       Boolean   @default(false) @map("is_onboarded")
+  joinedAt        DateTime  @default(now()) @map("joined_at")
+  lastLoginAt     DateTime? @map("last_login_at")
 
-  accounts          Account[]
-  sessions          Session[]
-  characters        Character[]
+  discordMembershipCheckedAt  DateTime? @map("discord_membership_checked_at")
+  discordMembershipLeftAt     DateTime? @map("discord_membership_left_at")
+  discordMembershipRejoinedAt DateTime? @map("discord_membership_rejoined_at")
 
-  createdAt         DateTime  @default(now()) @map("created_at")
-  updatedAt         DateTime  @updatedAt @map("updated_at")
+  accounts        Account[]
+  sessions        Session[]
+  characters      Character[]
+
+  characterApplications CharacterApplication[] @relation("UserCharacterApplications")
+  reviewedCharacterApplications CharacterApplication[] @relation("ReviewedCharacterApplications")
+
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
   @@map("users")
 }
 
 model Character {
-  id          String   @id @default(uuid())
-  userId      String   @map("user_id")
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
 
-  name        String
-  isPrimary   Boolean  @default(false) @map("is_primary")
-  isActive    Boolean  @default(true) @map("is_active")
+  name           String
+  phoneNumber    String?  @map("phone_number")
+  rank           String?
+  division       String?
+  specialization String?  @map("specialization")
+  yearsOfService Int?     @map("years_of_service")
 
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  isPrimary      Boolean  @default(false) @map("is_primary")
+  isActive       Boolean  @default(true) @map("is_active")
 
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
   @@index([userId])
   @@map("characters")
+}
+
+model CharacterApplication {
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+
+  oocNickname     String   @map("ooc_nickname")
+  characterName   String   @map("character_name")
+  phoneNumber     String   @map("phone_number")
+  rank            String
+  division        String
+  specialization  String?
+  yearsOfService  Int      @map("years_of_service")
+
+  status          CharacterApplicationStatus @default(PENDING)
+
+  reviewedById    String?   @map("reviewed_by_id")
+  reviewedAt      DateTime? @map("reviewed_at")
+  rejectionReason String?   @map("rejection_reason")
+
+  user            User  @relation("UserCharacterApplications", fields: [userId], references: [id], onDelete: Cascade)
+  reviewedBy      User? @relation("ReviewedCharacterApplications", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([status])
+  @@index([reviewedById])
+  @@map("character_applications")
 }
 
 model Account {
@@ -71,7 +123,7 @@ model Account {
   id_token          String? @db.Text
   session_state     String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
@@ -83,7 +135,7 @@ model Session {
   userId       String   @map("user_id")
   expires      DateTime
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }

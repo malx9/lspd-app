@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
-export default async function ProtectedPage() {
+export default async function dashboard() {
   const session = await auth();
 
   if (!session?.user) {
@@ -10,9 +10,7 @@ export default async function ProtectedPage() {
 
   return (
     <main className="p-8">
-      <h1 className="text-2xl font-semibold">Protected</h1>
-      <p className="mt-4">User ID: {session.user.id}</p>
-      <p>Role: {session.user.role ?? "member"}</p>
+      <h1 className="text-2xl font-semibold">Witaj, {session.user.nickname}</h1>
     </main>
   );
 }
