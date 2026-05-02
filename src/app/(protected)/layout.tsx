@@ -65,7 +65,7 @@ export default async function ProtectedLayout({
             role={user.role}
           />
 
-          <main className="min-h-[calc(100dvh-4rem)]">{children}</main>
+          <main className="min-h-[calc(100dvh-4rem)] p-8">{children}</main>
         </SidebarInset>
       </SidebarProvider>
     </TooltipProvider>
